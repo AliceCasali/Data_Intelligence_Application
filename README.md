@@ -1,4 +1,4 @@
-# Data_Intelligence_Application
+# Data Intelligence Application Exam Project
 
 ## Pricing and Matching
 
