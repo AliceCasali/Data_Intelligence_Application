@@ -1,6 +1,6 @@
 # Data_Intelligence_Application
 
-##Pricing and Matching
+#Pricing and Matching
 
 **Scenario**: Consider the scenario in which a shop has a number of promo codes to incentivize the customers that buy an item to buy a different item. The customers can belong to different classes and the promo codes can provide different discounts.
 
