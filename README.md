@@ -13,7 +13,7 @@ Every price available is associated with a margin obtained by the sale that is k
 The conversion rates will change during time according to some phases due to, e.g., seasonality.
 
 # Team
-- [Alice Casali] (https://github.com/AliceCasali/)
-- [Anna Giovannacci] (https://github.com/annagiovannacci)
-- [Ege Saygılı] (https://github.com/egesaygili)
-- [Francesco Amorosini] (https://github.com/FrancescoAmorosini)
+- [Alice Casali](https://github.com/AliceCasali/)
+- [Anna Giovannacci](https://github.com/annagiovannacci)
+- [Ege Saygılı](https://github.com/egesaygili)
+- [Francesco Amorosini](https://github.com/FrancescoAmorosini)
