@@ -1,6 +1,6 @@
 # Data Intelligence Application Exam Project
 
-## Pricing and Matching
+# Pricing and Matching
 
 **Scenario**: Consider the scenario in which a shop has a number of promo codes to incentivize the customers that buy an item to buy a different item. The customers can belong to different classes and the promo codes can provide different discounts.
 
@@ -11,3 +11,9 @@ Once a buyer has bought the item, she/he can decide to buy the second item that 
 Every price available is associated with a margin obtained by the sale that is known beforehand. This holds both for the first and the second item. 
 
 The conversion rates will change during time according to some phases due to, e.g., seasonality.
+
+# Team
+- [Alice Casali] (https://github.com/AliceCasali/)
+- [Anna Giovannacci] (https://github.com/annagiovannacci)
+- [Ege Saygılı] (https://github.com/egesaygili)
+- [Francesco Amorosini] (https://github.com/FrancescoAmorosini)
