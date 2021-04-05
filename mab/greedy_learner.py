@@ -1,9 +1,9 @@
 from learner import *
 
-class GreadyLearner(Learner):
-    def __init__(self, n_arms):
-        super().__init__(n_arms)
-        self.expected_rewards = np.zeros(n_arms)
+class Gready_Learner(Learner):
+    def __init__(self, arms):
+        super().__init__(arms)
+        self.expected_rewards = np.zeros(self.n_arms)
 
     def pull_arm(self):
         if(self.t < self.n_arms):
