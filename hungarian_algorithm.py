@@ -217,7 +217,14 @@ def hungarian_algorithm(matrix):
 
 
 # initialize a random adjacency matrix with numpy
-a = np.random.randint(100, size=(3, 3))
+a = np.random.randint(100, size=(13, 13)) + 1
 
-res = hungarian_algorithm(a)
+print(a)
+res = hungarian_algorithm(a) #Minimum weights
 print("\n Optimal Matching:\n", res[1], "\n Value: ", np.sum(res[0]))
+
+maxElem = np.amax(a)
+newres = hungarian_algorithm(np.vectorize(lambda x: maxElem - x)(a)) #Maximum weights
+maskedarr= np.multiply(a,newres[1]) #Mask the original data with the hungarian result
+
+print("\n Optimal Matching:\n", newres[1], "\n Value: ", np.sum(maskedarr))
