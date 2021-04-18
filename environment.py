@@ -4,6 +4,7 @@ import statistics
 from scipy.stats import truncnorm
 
 
+
 class Environment():
     '''
         gaussian_parameters should be a list of lists of the form:
@@ -12,7 +13,7 @@ class Environment():
     '''
     def __init__(self, gaussian_parameters,discounts):#,conversion_rate):
         #self.probabilities = probabilities
-        self.medias = gaussian_parameters[0]
+        self.mean = gaussian_parameters[0]
         self.variances = gaussian_parameters[1]
 
         myclip_a = 0
@@ -33,7 +34,7 @@ class Environment():
         self.promo2 = discounts[1]
         self.promo3 = discounts[2]
 
-    def update_probabilities(self,optimal_solution):
+'''    def update_probabilities(self,optimal_solution):
         #given a optimal solution, it returns an array for each discount
         #for example: in optimal solution c0 is assigned to p0, it will be:
         #p0=[0.75 0.15 0.05 0.05]
@@ -51,18 +52,27 @@ class Environment():
         p2 = self.calculation_probabilities_for_update(best_assignment_2)
         p3 = self.calculation_probabilities_for_update(best_assignment_3)
 
-        return p0,p1,p2,p3
+        return p0,p1,p2,p3'''
     
-    def calculation_probabilities_for_update(self, best_assignment):
+    def calculation_probabilities_for_update(self,fractions,graph, class_id, MODE):
         
         p = [ 0 for x in range(0,4)]
-        p[best_assignment] = 0.70
-        indices = [x for x in range(0,4) if x!= best_assignment]
-        for i in indices:
-            p[i] = 0.10
-        return p
+        if MODE == 'no_fraction':
+            p[best_assignment] = 0.70
+            indices = [x for x in range(0,4) if x!= best_assignment]
+            for i in indices:
+                p[i] = 0.10
+            return p
+        elif MODE == 'fraction':
+            index_max = np.argmax(graph[class_id][0])
+            p[index_max] = graph[class_id][0][index_max] #Not so sure about this syntax...
+            indices = [x for x in range(0,4) if x!= index_max]
+            for i in indices:
+                p[i] = graph[class_id][0][i]
+            return p
 
 
+    
 gaussian_parameters = [1,2,3,4],[3,2,1,2]
 promo_codes = [0.25, 0.30, 0.50, 0.75]
 env = Environment(gaussian_parameters, promo_codes)
