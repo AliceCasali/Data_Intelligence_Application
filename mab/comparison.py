@@ -1,7 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from environment import *
-from ts_learner import *
 from greedy_learner import *
 
 p = np.array([ 0.15, 0.1, 0.1, 0.35])
