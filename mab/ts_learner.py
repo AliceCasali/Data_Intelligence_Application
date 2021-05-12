@@ -4,9 +4,10 @@ import numpy as np
 
 class TS_Learner(Learner):
   # Specialized Thompson Sampling Learner
-  def __init__(self, n_arms, n_classes=4):
-    super().__init__(n_arms=n_arms, n_classes=n_classes)
-    self.beta_parameters = [np.ones([n_arms, 2]) for x in range(n_classes)]
+  def __init__(self, arms, n_classes=4):
+    super().__init__(n_arms=len(arms), n_classes=n_classes)
+    self.arms = arms
+    self.beta_parameters = [np.ones([len(arms), 2]) for x in range(n_classes)]
 
   def pull_arm(self):
     idx = np.argmax(np.array(self.arms) * np.random.beta(self.beta_param[:, 0], self.beta_param[:, 1]))
