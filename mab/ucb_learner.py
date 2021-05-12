@@ -1,10 +1,10 @@
   
-from learner import Learner
+from mab.learner import Learner
 import numpy as np
 
 class UCB(Learner):
-    def __init__(self, arms):
-        super().__init__(arms)
+    def __init__(self, n_arms):
+        super().__init__(n_arms)
         self.empirical_means = np.zeros(self.n_arms)
         self.confidence = np.array([np.inf]*self.n_arms)
 
