@@ -7,8 +7,9 @@ def clamp(num, min_val, max_val):
 	return max(min(num, max_val), min_val)
 
 class Environment():
-    def __init__(self, gaussian_parameters, discounts, prices, conv_rate1, conv_rate2, fractions, fraction_idxs):
+    #def __init__(self, gaussian_parameters, discounts, prices, conv_rate1, conv_rate2, fractions, fraction_idxs):
         #self.probabilities = probabilities
+    def __init__(self, gaussian_parameters, discounts, prices, conv_rate1, conv_rate2):
         means, variances = zip(*gaussian_parameters)
         means = np.array(means)
         variances = np.array(variances)
@@ -19,16 +20,18 @@ class Environment():
         self.conv1 = conv_rate1
         self.conv2 = conv_rate2
         self.nclasses = len(means)
-        self.fractions = fractions
-        self.fraction_idxs = fraction_idxs
+        #self.fractions = fractions
+        #self.fraction_idxs = fraction_idxs
 
-    def round(self, pulled_arm):
-       return np.random.binomial(1, self.probabilities[pulled_arm])
-
-    # simulates a customer
-    def round_offline(self):
-    	reward = 0
-    	promo = -1
+    def round_1(self, pulled_arm):
+       return np.random.binomial(1, self.conv1[pulled_arm])
+    
+    def round_2(self, pulled_arm):
+       return np.random.binomial(1, self.conv2[pulled_arm])
+    '''# simulates a customer
+        def round_offline(self):
+    	    reward = 0
+    	    promo = -1
     	c = random.randint(0, 3)
     	while self.customers[c] == 0:
     		c = random.randint(0, 3)
@@ -54,7 +57,7 @@ class Environment():
     		c, promo, reward = self.round_offline()
     		rewards[c] += reward
     	print(np.array(rewards) / customer_numbers)
-    	return np.array(rewards) / customer_numbers
+    	return np.array(rewards) / customer_numbers'''
 
     def calculation_probabilities_for_update(self,fractions,graph, class_id, MODE):
         p = [ 0 for x in range(0,4)]
