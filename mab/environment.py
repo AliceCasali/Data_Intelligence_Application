@@ -14,7 +14,7 @@ class Environment():
         means = np.array(means)
         variances = np.array(variances)
 
-        self.customers = [clamp(int(np.random.normal(m, v)), int(m/2), int(3*m/2)) for m,v in zip(means, variances)]
+        self.customers = np.array([clamp(int(np.random.normal(m, v)), int(m/2), int(3*m/2)) for m,v in zip(means, variances)])
         self.discounts = discounts
         self.prices = prices
         self.conv1 = conv_rate1
@@ -23,8 +23,8 @@ class Environment():
         #self.fractions = fractions
         #self.fraction_idxs = fraction_idxs
 
-    def round_1(self, pulled_arm):
-       return np.random.binomial(1, self.conv1[pulled_arm])
+    def round1_per_class(self, pulled_arms):
+       return list(map(np.random.binomial, np.ones(len(pulled_arms)), self.conv1[pulled_arms]))
     
     def round_2(self, pulled_arm):
        return np.random.binomial(1, self.conv2[pulled_arm])

@@ -1,5 +1,4 @@
 {
     "python.formatting.provider": "yapf",
-    "jupyter.jupyterServerType": "local",
-    "python.pythonPath": "/bin/python3"
+    "jupyter.jupyterServerType": "local"
 }
