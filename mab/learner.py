@@ -10,7 +10,7 @@ class Learner():
         self.pulled_arms = [[] for i in range(n_classes)]
         self.rewards_per_arm = np.array([np.zeros(self.n_arms) for i in range(n_classes)])
 
-    def update_observations(self, pulled_arms, reward, c): 
-        self.rewards_per_arm[c, pulled_arms[c]] = reward[c]
-        self.pulled_arms[c].append(pulled_arms[c])
-        self.collected_rewards[c].append(reward[c])
+    def update_observations(self, pulled_arm, reward): 
+        self.rewards_per_arm[pulled_arm[0], pulled_arm[1]] = reward
+        self.pulled_arms[0].append(pulled_arm[1])
+        self.collected_rewards[0].append(reward)

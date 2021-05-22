@@ -23,8 +23,8 @@ class Environment():
         #self.fractions = fractions
         #self.fraction_idxs = fraction_idxs
 
-    def round1_per_class(self, pulled_arms):
-       return list(map(np.random.binomial, np.ones(len(pulled_arms)), self.conv1[pulled_arms]))
+    def round1(self, pulled_arm, cust):
+        return np.random.binomial(1, self.conv1[cust[0], pulled_arm[1]])
     
     def round_2(self, pulled_arm):
        return np.random.binomial(1, self.conv2[pulled_arm])
