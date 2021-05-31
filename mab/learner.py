@@ -9,8 +9,10 @@ class Learner():
         self.collected_rewards = [[]for i in range(n_classes)]
         self.pulled_arms = [[] for i in range(n_classes)]
         self.rewards_per_arm = np.array([np.zeros(self.n_arms) for i in range(n_classes)])
+        self.observed_customers = np.ones(n_classes)
 
-    def update_observations(self, pulled_arm, reward): 
-        self.rewards_per_arm[pulled_arm[0], pulled_arm[1]] = reward
+    def update_observations(self, pulled_arm, reward, c): 
+        self.rewards_per_arm[c, pulled_arm[1]] = reward
         self.pulled_arms[0].append(pulled_arm[1])
         self.collected_rewards[0].append(reward)
+        self.observed_customers[c] += (self.observed_customers[c])/(sum(self.observed_customers))

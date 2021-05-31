@@ -23,42 +23,16 @@ class Environment():
         #self.fractions = fractions
         #self.fraction_idxs = fraction_idxs
 
+    def update_customers(self, gaussian_parameters):
+        means, variances = zip(*gaussian_parameters)
+        self.customers = np.array([clamp(int(np.random.normal(m, v)), int(m/2), int(3*m/2)) for m,v in zip(means, variances)])
+
     def round1(self, pulled_arm, cust):
         return np.random.binomial(1, self.conv1[cust[0], pulled_arm[1]])
     
     def round_2(self, pulled_arm):
        return np.random.binomial(1, self.conv2[pulled_arm])
-    '''# simulates a customer
-        def round_offline(self):
-    	    reward = 0
-    	    promo = -1
-    	c = random.randint(0, 3)
-    	while self.customers[c] == 0:
-    		c = random.randint(0, 3)
-    	self.customers[c] -= 1
-    	rand = random.random() # random variable to decide whether the customer buys or not
-    	if rand < self.conv1[c]: # case when the customer buys the first item
-    		reward = self.prices[0]
-    		promo_p = np.cumsum(self.fractions[c])
-    		rand = random.random()
-    		for j in range(len(promo_p)):
-    			if rand < promo_p[j]:
-    				promo = j
-    				break
-    		rand = random.random()
-    		if rand < self.conv2[promo][c]:
-    			reward += self.prices[1]*(1-self.discounts[promo])
-    	return c, promo, reward
-
-    def round_day(self):
-    	rewards = [0, 0, 0, 0]
-    	customer_numbers = np.array([num for num in self.customers])
-    	for i in range(np.array(self.customers).sum()):
-    		c, promo, reward = self.round_offline()
-    		rewards[c] += reward
-    	print(np.array(rewards) / customer_numbers)
-    	return np.array(rewards) / customer_numbers'''
-
+    
     def calculation_probabilities_for_update(self,fractions,graph, class_id, MODE):
         p = [ 0 for x in range(0,4)]
         index_max = np.argmax(graph[class_id][0])

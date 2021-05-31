@@ -11,18 +11,18 @@ class UCB(Learner):
         self.arms = arms
 
     def pull_arm(self, customers):
-        upper = self.empirical_means[:]*self.arms*np.reshape(customers,(4,1)) + self.confidence[:]
+        upper = self.empirical_means[:] * self.arms * np.reshape(customers,(4,1)) + self.confidence[:]
         rows, cols = np.where(upper == upper.max()) 
         return random.choice(list(zip(rows,cols)))
     
-    def pull_arm2(self): #TODO for step4: this function does not take into account the number of customers per class
-        upper = self.empirical_means[:]*self.arms + self.confidence[:]
-        rows, cols = np.where(upper == upper.max()) 
+    def pull_arm_unkown_cust(self):
+        upper = self.empirical_means[:] * self.arms * np.reshape(self.observed_customers, (4,1)) + self.confidence[:]
+        rows, cols = np.where(upper == upper.max())
         return random.choice(list(zip(rows,cols)))
 
-    def update(self, pulled_arm, reward):
+    def update(self, pulled_arm, reward, c):
         self.t += 1
         self.empirical_means[pulled_arm[1]] = (self.empirical_means[pulled_arm[1]]*(self.t-1) + reward)/self.t
-        n_samples = len(self.rewards_per_arm[pulled_arm[0]])
+        n_samples = len(self.rewards_per_arm[c])
         self.confidence[pulled_arm[1]] = (2*np.log(self.t)/n_samples)**0.5 if n_samples > 0 else np.inf
-        self.update_observations(pulled_arm, reward)
+        self.update_observations(pulled_arm, reward, c)
