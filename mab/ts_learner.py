@@ -23,9 +23,8 @@ class TS_Learner(Learner):
     return fractions_idxs
 
   def update(self, pulled_arms, reward, to_be_updated):
-    #print(pulled_arm)
     for c in range(self.n_classes):
-      if not to_be_updated[c] : continue
+      if c!=to_be_updated : continue
       self.update_observations(pulled_arms, reward, c)
       self.beta_parameters[c][pulled_arms[c], 0] = self.beta_parameters[c][pulled_arms[c], 0] + reward[c]
       self.beta_parameters[c][pulled_arms[c], 1] = self.beta_parameters[c][pulled_arms[c], 1] + 1 - reward[c] #TODO: this was originally 1.0, we need some refactor to include such scenario

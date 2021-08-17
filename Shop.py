@@ -4,13 +4,21 @@ import itertools
 
 
 class Shop():
-    def __init__(self):
+    def __init__(self,step3 = False, price2= 15):
         self.n_classes = 4
         self.prices1 = np.cumsum(np.linspace(80,240, num=5))
-        self.prices2 = np.cumsum(np.linspace(100,300, num=5))
         self.discounts = np.array([0.0, 0.05, 0.10, 0.25])
+        print(step3)
+        if step3:
+            #we know the price, so here we have a number
+            self.prices2 = np.array([price2 for x in range(self.n_classes)])
+            self.conv2 = np.array([[utilities.generate_conversion_rate(self.prices2) for x in range(self.n_classes)] for y in range(len(self.discounts))]) # [class x promo x price]      
+        else:    
+            self.prices2 = np.cumsum(np.linspace(100,300, num=5))
+            self.conv2 = np.array([[utilities.generate_conversion_rate(self.prices2) for x in range(self.n_classes)] for y in range(len(self.discounts))]) # [class x promo x price]      
+
+        
         self.conv1 = np.array([utilities.generate_conversion_rate(self.prices1) for x in range(self.n_classes)]) # [class x price]
-        self.conv2 = np.array([[utilities.generate_conversion_rate(self.prices2) for x in range(self.n_classes)] for y in range(len(self.discounts))]) # [class x promo x price]      
     
     def set_expected_customers(self, customers):
         self.customers = customers
