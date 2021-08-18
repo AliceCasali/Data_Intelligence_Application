@@ -1,31 +1,19 @@
 from mab.learner import *
-import numpy as np
-
 
 class TS_Learner(Learner):
   # Specialized Thompson Sampling Learner
-  def __init__(self, arms,n_classes = 4):
+  def __init__(self, arms, n_classes = 4):
     super().__init__(n_arms=len(arms),n_classes=n_classes)
     self.arms = np.array(arms)
-    self.beta_parameters = np.array([np.ones([len(arms), 2]) for x in range(n_classes)])
-
-  def pull_arm_per_class(self):
-    idx = []
-    for i in range(self.n_classes):
-      idx.append(np.argmax(self.arms * np.random.beta(self.beta_parameters[i][:, 0], self.beta_parameters[i][:, 1])))
-    return idx
+    self.beta_parameters_price = np.array([np.ones(2) for x in range(len(arms))])
   
-  def select_fractions(self):
-    fractions_idxs = []
-    for i in range(4):
-      idx = np.argmax(np.random.beta(self.beta_parameters[i][:,0], self.beta_parameters[i][:,1]))
-      fractions_idxs.append(idx)
-    return fractions_idxs
+  def pull_arm(self, customers):
+    to_pull = self.arms*np.random.beta(self.beta_parameters_price[:, 0], self.beta_parameters_price[:, 1])
+    idx = np.unravel_index(to_pull.argmax(), to_pull.shape)
+    return idx
 
-  def update(self, pulled_arms, reward, to_be_updated):
-    for c in range(self.n_classes):
-      if c!=to_be_updated : continue
-      self.update_observations(pulled_arms, reward, c)
-      self.beta_parameters[c][pulled_arms[c], 0] = self.beta_parameters[c][pulled_arms[c], 0] + reward[c]
-      self.beta_parameters[c][pulled_arms[c], 1] = self.beta_parameters[c][pulled_arms[c], 1] + 1 - reward[c] #TODO: this was originally 1.0, we need some refactor to include such scenario
+  def update(self, pulled_arm, reward, c):
+    self.update_observations(pulled_arm, reward, c)
+    self.beta_parameters_price[pulled_arm, 0] = self.beta_parameters_price[pulled_arm, 0] + reward
+    self.beta_parameters_price[pulled_arm, 1] = self.beta_parameters_price[pulled_arm, 1] + 1 - reward
     self.t += 1
