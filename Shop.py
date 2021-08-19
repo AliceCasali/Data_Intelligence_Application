@@ -61,5 +61,4 @@ class Shop():
         enum_customers = [(self.matched_promos[i], cust) for i, cust in enum_customers] # [(0, 10), (1, 23), (2, 30), (3, 54)] --> [(3, 10), (1, 23), (2, 30), (0, 54)]
         self.coupons = np.concatenate([np.ones(c)*self.discounts[p] for p,c in enum_customers]) # [(3, 10), (1, 23), (2, 30), (0, 54)] --> [0,0,0,0, ... 0.05,0.05,0.05,0.05 ... ]
         
-        
 
