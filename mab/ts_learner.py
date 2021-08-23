@@ -17,3 +17,8 @@ class TS_Learner(Learner):
     self.beta_parameters_price[pulled_arm, 0] = self.beta_parameters_price[pulled_arm, 0] + reward
     self.beta_parameters_price[pulled_arm, 1] = self.beta_parameters_price[pulled_arm, 1] + 1 - reward
     self.t += 1
+
+  def pull_arm_normalized(self):
+    to_pull = np.random.beta(self.beta_parameters_price[:, 0], self.beta_parameters_price[:, 1])
+    idx = np.unravel_index(to_pull.argmax(), to_pull.shape)
+    return idx

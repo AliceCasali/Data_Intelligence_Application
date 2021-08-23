@@ -8,8 +8,8 @@ from utilities import *
 class Shop():
     def __init__(self):
         self.n_classes = 4
-        self.prices1 = np.cumsum(np.linspace(80,240, num=5))
-        self.prices2 = np.cumsum(np.linspace(100,300, num=5))
+        self.prices1 = np.linspace(80,240, num=5)
+        self.prices2 = np.linspace(100,300, num=5)
         self.discounts = np.array([0.0, 0.05, 0.10, 0.25])
         self.conv1 = np.array([generate_conversion_rate(self.prices1) for x in range(self.n_classes)]) # [class x price]
         self.conv2 = np.array([[generate_conversion_rate(self.prices2) for x in range(self.n_classes)] for y in range(len(self.discounts))]) # [class x promo x price]      
@@ -35,9 +35,12 @@ class Shop():
             perm_prices = list(itertools.product(self.prices1, self.prices2))
         elif (chosen_price1 is not None) and (chosen_price2 is None):
             perm_prices = list(itertools.product([self.prices1[chosen_price1]], self.prices2))
+        elif (chosen_price1 is None) and (chosen_price2 is not None):
+            perm_prices = list(itertools.product(self.prices1, [self.prices2[chosen_price2]]))
         else:
             perm_prices = [(chosen_price1, chosen_price2)]
 
+        
         reward = 0
 
         # for each price
@@ -46,6 +49,7 @@ class Shop():
             for c in range(self.n_classes):
                 # for each promos
                 for j in range(len(self.discounts)):
+                    #TODO we are assuming that we have 5 candidate prices
                     weights[c,j] = p[0]*self.conv1[c, index(self.prices1, p[0])] + (1-self.discounts[j])*p[1]*self.conv2[c,j,index(self.prices2, p[1])]
 
             col_ind = [np.argmax(row_class) for row_class in weights]
