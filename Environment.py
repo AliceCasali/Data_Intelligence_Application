@@ -14,13 +14,14 @@ class Environment():
         
         #Conversion rates
         self.true_conv1 = np.array([generate_conversion_rate(prices1) for x in range(self.n_classes)]) # [class x price]
-        self.true_conv2 = np.array([[generate_conversion_rate(prices2) for x in range(self.n_classes)] for y in range(len(discounts))]) # [class x promo x price]      
+        self.true_conv2 = np.array([[generate_conversion_rate(prices2) for x in range(self.n_classes)] for y in range(len(discounts))]) # [promo x class x price]      
     
     def round1(self, cust_class, price):
         return np.random.binomial(1, self.true_conv1[cust_class, index(self.prices1, price)])
     
     def round2(self, cust_class, promo, price):
-        return np.random.binomial(1, self.true_conv2[cust_class, promo, index(self.prices2, price)])
+        ## TODO should be promo, class, price
+        return np.random.binomial(1, self.true_conv2[promo, cust_class, index(self.prices2, price)])
 
     #Adjust "means" and "variances" in order to test different distributions of customers 
     def generate_next_day_customers(self, means = ([25, 25, 25, 25]), variances =  ([10,10,10,10])):

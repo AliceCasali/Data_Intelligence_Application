@@ -7,7 +7,7 @@ class TS_Learner(Learner):
     self.arms = np.array(arms)
     self.beta_parameters_price = np.array([np.ones(2) for x in range(len(arms))])
   
-  def pull_arm(self, customers):
+  def pull_arm(self):
     to_pull = self.arms*np.random.beta(self.beta_parameters_price[:, 0], self.beta_parameters_price[:, 1])
     idx = np.unravel_index(to_pull.argmax(), to_pull.shape)
     return idx
