@@ -64,10 +64,35 @@ class Shop():
             if (total_reward > reward):
                 self.best_price, self.matched_promos, self.promo_rewards, reward = p, col_ind, promo_reward,  total_reward
 
-    def print_coupons(self):
-        enum_customers = list(enumerate(self.customers)) # [10, 23, 30, 54] --> [(0, 10), (1, 23), (2, 30), (3, 54)]
-        self.customers_random = np.concatenate([np.ones(c)*p for p,c in enum_customers])
-        enum_customers = [(self.matched_promos[i], cust) for i, cust in enum_customers] # [(0, 10), (1, 23), (2, 30), (3, 54)] --> [(3, 10), (1, 23), (2, 30), (0, 54)]
-        self.coupons = np.concatenate([np.ones(c)*self.discounts[p] for p,c in enum_customers]) # [(3, 10), (1, 23), (2, 30), (0, 54)] --> [0,0,0,0, ... 0.05,0.05,0.05,0.05 ... ]
-        
+    def print_coupons(self, shop_ts = None, shop_ucb = None, promo_fractions = None):
+        if(shop_ts is None and shop_ucb is None and promo_fractions is None):
+            enum_customers = list(enumerate(self.customers)) # [10, 23, 30, 54] --> [(0, 10), (1, 23), (2, 30), (3, 54)]
+            self.customers_random = np.concatenate([np.ones(c)*p for p,c in enum_customers])
+            enum_customers = [(self.matched_promos[i], cust) for i, cust in enum_customers] # [(0, 10), (1, 23), (2, 30), (3, 54)] --> [(3, 10), (1, 23), (2, 30), (0, 54)]
+            self.coupons = np.concatenate([np.ones(c)*self.discounts[p] for p,c in enum_customers]) # [(3, 10), (1, 23), (2, 30), (0, 54)] --> [0,0,0,0, ... 0.05,0.05,0.05,0.05 ... ]
+        else:
+            clairvoyant_n_promos = (self.customers*promo_fractions + 0.99).astype(int)
+            ts_n_promos = (shop_ts.customers*promo_fractions + 0.99).astype(int)
+            ucb_n_promos = (shop_ucb.customers*promo_fractions + 0.99).astype(int)
+
+            clairvoyant_promos = [list(enumerate(l)) for l in clairvoyant_n_promos]
+            ts_promos = [list(enumerate(l)) for l in ts_n_promos]
+            ucb_promos = [list(enumerate(l)) for l in ucb_n_promos]
+
+            clairvoyant_promos = [np.concatenate([np.ones(c).astype(int)*p for p,c in promo]) for promo in clairvoyant_promos]
+            ts_promos = [np.concatenate([np.ones(c).astype(int)*p for p,c in promo]) for promo in ts_promos]
+            ucb_promos = [np.concatenate([np.ones(c).astype(int)*p for p,c in promo]) for promo in ucb_promos]
+
+            for i in range(4):
+                np.random.shuffle(clairvoyant_promos[i])
+                np.random.shuffle(ts_promos[i])
+                np.random.shuffle(ucb_promos[i])
+
+            clairvoyant_promos = [list(promo) for promo in clairvoyant_promos]
+            ts_promos = [list(promo) for promo in ts_promos]
+            ucb_promos = [list(promo) for promo in ucb_promos]
+
+            promos = clairvoyant_promos*2
+            return promos
+
 
