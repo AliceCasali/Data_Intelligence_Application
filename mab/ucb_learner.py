@@ -10,7 +10,7 @@ class UCB(Learner):
 
     def pull_arm(self):
         upper_conf = self.empirical_means + self.confidence
-        return np.random.choice(np.where(upper_conf == upper_conf.max())[0]), self.empirical_means, self.confidence, upper_conf
+        return np.random.choice(np.where(upper_conf == upper_conf.max())[0])#, self.empirical_means, self.confidence, upper_conf
 
     def update(self, pull_arm,reward):
         self.t += 1
