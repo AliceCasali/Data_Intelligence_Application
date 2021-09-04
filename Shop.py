@@ -14,6 +14,7 @@ class Shop():
         self.conv1 = np.array([generate_conversion_rate(self.prices1) for x in range(self.n_classes)]) # [class x price]
         self.conv2 = np.array([[generate_conversion_rate(self.prices2) for x in range(self.n_classes)] for y in range(len(self.discounts))]) # [promo x class x price]      
         
+
     def set_expected_customers(self, customers):
         self.customers = customers
     
@@ -21,11 +22,18 @@ class Shop():
         self.conv1 = conv1
         self.conv2 = conv2
     
-    def set_price_learner (self, learner):
+    def set_price_learner (self, learner, n_arms):
         if learner == 'TS':
-            self.price_learner = TS_Learner(arms=self.prices1)
+            self.price_learner = TS_Learner(n_arms=n_arms)
         elif learner == 'UCB':
-            self.price_learner = UCB(n_arms=len(self.prices1))
+            self.price_learner = UCB(n_arms=n_arms)
+
+    def set_assignment_learner(self, learner, n_arms):
+        if learner == 'TS':
+            self.assignment_learner = TS_Learner(n_arms=n_arms)
+        elif learner == 'UCB':
+            self.assignment_learner = UCB(n_arms=n_arms)
+    
     
     def best_promo_per_class(self, chosen_price1 = None, chosen_price2 = None):
         N = np.array([1,1,1,1])

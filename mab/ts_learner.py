@@ -2,10 +2,9 @@ from mab.learner import *
 
 class TS_Learner(Learner):
   # Specialized Thompson Sampling Learner
-  def __init__(self, arms, n_classes = 4):
-    super().__init__(n_arms=len(arms),n_classes=n_classes)
-    self.arms = np.array(arms)
-    self.beta_parameters = np.ones((len(arms), 2))
+  def __init__(self, n_arms, n_classes = 4):
+    super().__init__(n_arms=n_arms,n_classes=n_classes)
+    self.beta_parameters = np.ones((n_arms, 2))
   
   """def pull_arm(self):
     to_pull = self.arms*np.random.beta(self.beta_parameters_price[:, 0], self.beta_parameters_price[:, 1])
