@@ -1,4 +1,5 @@
 from mab.learner import *
+from scipy.optimize import linear_sum_assignment
 
 class TS_Learner(Learner):
   # Specialized Thompson Sampling Learner
@@ -21,3 +22,15 @@ class TS_Learner(Learner):
   def pull_arm(self):
     idx = np.argmax(np.random.beta(self.beta_parameters[:,0], self.beta_parameters[:,1]))
     return idx
+
+  def pull_arm_matching(self, ec, ep, arms):
+        graph = np.zeros((len(ec), len(ep)))
+        for i in range(len(ec)):
+            for j in range(len(ep)):
+                arm_index = arms.index((ec[i], ep[j]))
+                graph[i,j] = np.random.beta(self.beta_parameters[arm_index,0], self.beta_parameters[arm_index, 1])
+        
+        matched_c, matched_p = linear_sum_assignment(-graph)
+        matched_tuples = [(ec[c], ep[p]) for c,p in zip(matched_c, matched_p)]
+
+        return matched_tuples

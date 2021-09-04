@@ -13,7 +13,42 @@ class Shop():
         self.discounts = np.array([0.0, 0.05, 0.10, 0.25])
         self.conv1 = np.array([generate_conversion_rate(self.prices1) for x in range(self.n_classes)]) # [class x price]
         self.conv2 = np.array([[generate_conversion_rate(self.prices2) for x in range(self.n_classes)] for y in range(len(self.discounts))]) # [promo x class x price]      
+
+    def get_clairvoyant_matching(self, ec, ep, pidx1, pidx2):
+        p1 = self.prices1[pidx1]
+        p2 = self.prices2[pidx2]
+        graph = np.zeros((len(ec), len(ep)))
+        for i in range(len(ec)):
+            for j in range(len(ep)):
+                graph[i,j] = p1*self.conv1[ec[i], pidx1] + self.conv1[ec[i], pidx1]*p2*(1-self.discounts[ep[j]])*self.conv2[ep[j], ec[i], pidx2]
         
+        matched_c, matched_p = linear_sum_assignment(-graph)
+        matched_tuples = [(ec[c], ep[p]) for c,p in zip(matched_c, matched_p)]
+
+        return matched_tuples
+
+    def get_customer_list(self):
+	    customers_enum = list(enumerate(self.customers))
+	    customer_list = np.concatenate([np.ones(c).astype(int)*p for p,c in customers_enum])
+	    return customer_list
+
+    def get_promo_list(self, promo_portions):
+        en_promos = self.customers.sum()*promo_portions
+        en_promos = en_promos.astype(int)
+        en_promos[0] += self.customers.sum() - en_promos.sum()
+
+        expected_promos = list(enumerate(en_promos))
+        expected_promos = np.concatenate([np.ones(c).astype(int)*p for p,c in expected_promos])
+        return expected_promos
+
+    def get_promo_fractions_from_tuples(self, matched_tuples):
+        promo_fractions = np.zeros((self.n_classes, len(self.discounts)))
+
+        for t in matched_tuples:
+            promo_fractions[t[0], t[1]] += 1
+
+        promo_fractions /= self.customers.reshape(4,1)
+        return promo_fractions
 
     def set_expected_customers(self, customers):
         self.customers = customers
