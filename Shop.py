@@ -22,8 +22,8 @@ class Shop():
             for j in range(len(ep)):
                 graph[i,j] = p1*self.conv1[ec[i], pidx1] + self.conv1[ec[i], pidx1]*p2*(1-self.discounts[ep[j]])*self.conv2[ep[j], ec[i], pidx2]
         
-        matched_c, matched_p = linear_sum_assignment(-graph)
-        matched_tuples = [(ec[c], ep[p]) for c,p in zip(matched_c, matched_p)]
+        matched_c, matched_p = linear_sum_assignment(-graph) # individual matching
+        matched_tuples = [(ec[c], ep[p]) for c,p in zip(matched_c, matched_p)] # (customer_class, promo_type)
 
         return matched_tuples
 
