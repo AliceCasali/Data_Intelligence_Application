@@ -45,7 +45,7 @@ class Shop():
         promo_fractions = np.zeros((self.n_classes, len(self.discounts)))
 
         for t in matched_tuples:
-            promo_fractions[t[0], t[1]] += 1
+            promo_fractions[t[-2], t[-1]] += 1
 
         promo_fractions /= self.customers.reshape(4,1)
         return promo_fractions

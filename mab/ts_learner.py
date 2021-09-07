@@ -23,14 +23,47 @@ class TS_Learner(Learner):
     idx = np.argmax(np.random.beta(self.beta_parameters[:,0], self.beta_parameters[:,1]))
     return idx
 
-  def pull_arm_matching(self, ec, ep, arms):
+  def pull_arm_matching(self, ec, ep, arms, p1idx=None, p2idx=None):
         graph = np.zeros((len(ec), len(ep)))
         for i in range(len(ec)):
             for j in range(len(ep)):
+              arm_index = None
+              if p1idx is not None and p2idx is not None:
+                arm_index = arms.index((p1idx, p2idx, ec[i], ep[j]))
+              elif p1idx is not None:
+                arm_index = arms.index((p1idx, ec[i], ep[j]))
+              elif p2idx is not None:
+                arm_index = arms.index((p2idx, ec[i], ep[j]))
+              else:
                 arm_index = arms.index((ec[i], ep[j]))
-                graph[i,j] = np.random.beta(self.beta_parameters[arm_index,0], self.beta_parameters[arm_index, 1])
+              graph[i,j] = np.random.beta(self.beta_parameters[arm_index,0], self.beta_parameters[arm_index, 1])
         
         matched_c, matched_p = linear_sum_assignment(-graph)
         matched_tuples = [(ec[c], ep[p]) for c,p in zip(matched_c, matched_p)]
 
         return matched_tuples
+
+  def pull_arm_all(self, ec, ep, arms, n_price1, n_price2):
+    matched_tuples_list = []
+    match_scores = []
+    
+    for k in range(n_price1):
+      for l in range(n_price2):
+        graph = np.zeros((len(ec), len(ep)))
+        for i in range(len(ec)):
+            for j in range(len(ep)):
+              arm_index = arms.index((k, l , ec[i], ep[j]))
+              graph[i,j] = np.random.beta(self.beta_parameters[arm_index,0], self.beta_parameters[arm_index, 1])
+        
+        matched_c, matched_p = linear_sum_assignment(-graph)
+        matched_tuples = [(ec[c], ep[p]) for c,p in zip(matched_c, matched_p)]
+
+        matched_tuples_list.append(matched_tuples)
+        
+        score = graph[matched_c, matched_p].sum()
+        match_scores.append(score)
+
+    return matched_tuples_list[np.argmax(match_scores)], np.argmax(match_scores)
+
+
+
