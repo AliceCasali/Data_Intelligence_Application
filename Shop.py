@@ -14,6 +14,30 @@ class Shop():
         self.conv1 = np.array([generate_conversion_rate(self.prices1) for x in range(self.n_classes)]) # [class x price]
         self.conv2 = np.array([[generate_conversion_rate(self.prices2) for x in range(self.n_classes)] for y in range(len(self.discounts))]) # [promo x class x price]      
 
+    def get_clairvoyant_prices_and_matching(self, ec, ep, n_price1, n_price2):
+        matched_tuples_list = []
+        match_scores = []
+
+        for k in range(n_price1):
+            for l in range(n_price2):
+                graph = np.zeros((len(ec), len(ep)))
+                p1 = self.prices1[k]
+                p2 = self.prices2[l]
+                for i in range(len(ec)):
+                    for j in range(len(ep)):
+                        graph[i,j] = p1*self.conv1[ec[i], k] + self.conv1[ec[i], k]*p2*(1-self.discounts[ep[j]])*self.conv2[ep[j], ec[i], l]
+
+                matched_c, matched_p = linear_sum_assignment(-graph)
+                matched_tuples = [(ec[c], ep[p]) for c,p in zip(matched_c, matched_p)]
+
+                matched_tuples_list.append(matched_tuples)
+
+                score = graph[matched_c, matched_p].sum()
+                match_scores.append(score)
+        
+        return matched_tuples_list[np.argmax(match_scores)], np.argmax(match_scores), np.max(match_scores)
+ 
+    
     def get_clairvoyant_matching(self, ec, ep, pidx1, pidx2):
         p1 = self.prices1[pidx1]
         p2 = self.prices2[pidx2]
