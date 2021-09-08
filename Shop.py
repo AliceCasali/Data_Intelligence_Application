@@ -35,7 +35,7 @@ class Shop():
                 score = graph[matched_c, matched_p].sum()
                 match_scores.append(score)
         
-        return matched_tuples_list[np.argmax(match_scores)], np.argmax(match_scores), np.max(match_scores)
+        return matched_tuples_list[np.argmax(match_scores)], np.argmax(match_scores), np.max(match_scores), match_scores
  
     
     def get_clairvoyant_matching(self, ec, ep, pidx1, pidx2):
