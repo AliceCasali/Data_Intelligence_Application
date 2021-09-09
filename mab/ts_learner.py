@@ -30,9 +30,9 @@ class TS_Learner(Learner):
               arm_index = None
               if p1idx is not None and p2idx is not None:
                 arm_index = arms.index((p1idx, p2idx, ec[i], ep[j]))
-              elif p1idx is not None:
+              elif p1idx is not None and p2idx:
                 arm_index = arms.index((p1idx, ec[i], ep[j]))
-              elif p2idx is not None:
+              elif p2idx is not None and p1idx:
                 arm_index = arms.index((p2idx, ec[i], ep[j]))
               else:
                 arm_index = arms.index((ec[i], ep[j]))

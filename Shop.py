@@ -86,6 +86,12 @@ class Shop():
             self.price_learner = TS_Learner(n_arms=n_arms)
         elif learner == 'UCB':
             self.price_learner = UCB(n_arms=n_arms)
+    
+    def set_price2_learner (self, learner, n_arms):
+        if learner == 'TS':
+            self.price2_learner = TS_Learner(n_arms=n_arms)
+        elif learner == 'UCB':
+            self.price2_learner = UCB(n_arms=n_arms)
 
     def set_assignment_learner(self, learner, n_arms):
         if learner == 'TS':
