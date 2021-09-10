@@ -7,6 +7,7 @@ class UCB_SW(LearnerSW):
         super().__init__(n_arms, n_classes, frame_size, days)
         self.empirical_means = np.zeros(n_arms)
         self.confidence = np.array([np.inf]*n_arms)
+        self.n_samples = np.zeros(n_arms)
 
     def get_empirical_means(self, day):
         em = np.zeros(self.n_arms)
@@ -36,11 +37,35 @@ class UCB_SW(LearnerSW):
     
     def pull_arm(self, day):
         upper_conf = self.get_empirical_means(day) + self.get_confidences(day)
+        #upper_conf = self.empirical_means + self.confidence
         return np.random.choice(np.where(upper_conf == upper_conf.max())[0]) 
 
     def update(self, pull_arm, reward, day):
         self.t += 1
         self.update_observations(pull_arm, reward, day)
+
+    def update2(self, pull_arm, reward, day):
+        self.t += 1
+        self.empirical_means[pull_arm] = (self.empirical_means[pull_arm]*(self.t-1) + reward)/self.t
+        self.update_observations(pull_arm, reward, day)
+        self.n_samples[pull_arm] += 1
+
+    def end_of_day(self, day):
+        if self.frame_size <= day:
+            day_to_delete = day - self.frame_size
+            for i in range(self.n_arms): 
+                ##  you have self.collected_reward[arm][day] --> a list of rewards
+                n_prev = self.n_samples[i]
+                n_del = len(self.collected_rewards[i][day])
+                rew_del = np.sum(self.collected_rewards[i][day])
+                self.empirical_means[i] = (self.empirical_means[i]*n_prev - rew_del) / (n_prev-n_del)
+                self.n_samples[i] = n_prev - n_del
+                self.t -= n_del
+
+        for i in range(self.n_arms):
+            self.confidence[i] = (2*np.log(self.t)/self.n_samples[i])**0.5 if self.n_samples[i] > 0 else np.inf
+                
+
 
     def pull_arm_matching(self, ec, ep, arms, day, p1idx=None, p2idx=None):
         c = self.get_confidences(day)
@@ -58,6 +83,7 @@ class UCB_SW(LearnerSW):
                 else:
                     arm_index = arms.index((ec[i], ep[j]))
                 graph[i,j] = em[arm_index] + c[arm_index]
+                #graph[i,j] = self.empirical_means[arm_index] + self.confidence[arm_index]
                 if graph[i,j] == np.inf:
                     graph[i,j] = 1e3
         
@@ -80,7 +106,8 @@ class UCB_SW(LearnerSW):
                     for j in range(len(ep)):
                         arm_index = arms.index((k, l , ec[i], ep[j]))
                         graph[i,j] = em[arm_index] + c[arm_index]
-        
+                        #graph[i,j] = self.empirical_means[arm_index] + self.confidence[arm_index]
+
                 matched_c, matched_p = linear_sum_assignment(-graph)
                 matched_tuples = [(ec[c], ep[p]) for c,p in zip(matched_c, matched_p)]
 

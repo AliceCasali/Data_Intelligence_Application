@@ -24,6 +24,7 @@ class TS_Learner_SW(LearnerSW):
     def pull_arm(self, day):
         bp = self.get_beta_parameters(day)
         idx = np.argmax(np.random.beta(bp[:,0], bp[:,1]))
+        #idx = np.argmax(np.random.beta(self.beta_parameters[:,0], bp[:,1]))
         return idx
 
     def pull_arm_matching(self, ec, ep, arms, day, p1idx=None, p2idx=None):
@@ -41,7 +42,8 @@ class TS_Learner_SW(LearnerSW):
               else:
                 arm_index = arms.index((ec[i], ep[j]))
               graph[i,j] = np.random.beta(bp[arm_index,0], bp[arm_index, 1])
-        
+              #graph[i,j] = np.random.beta(self.beta_parameters[arm_index,0], self.beta_parameters[arm_index, 1])
+
         matched_c, matched_p = linear_sum_assignment(-graph)
         matched_tuples = [(ec[c], ep[p]) for c,p in zip(matched_c, matched_p)]
 
@@ -59,7 +61,7 @@ class TS_Learner_SW(LearnerSW):
                     for j in range(len(ep)):
                         arm_index = arms.index((k, l , ec[i], ep[j]))
                         graph[i,j] = np.random.beta(bp[arm_index,0], bp[arm_index, 1])
-        
+                        #graph[i,j] = np.random.beta(self.beta_parameters[arm_index,0], self.beta_parameters[arm_index, 1])
                 matched_c, matched_p = linear_sum_assignment(-graph)
                 matched_tuples = [(ec[c], ep[p]) for c,p in zip(matched_c, matched_p)]
 
@@ -69,3 +71,22 @@ class TS_Learner_SW(LearnerSW):
                 match_scores.append(score)
 
         return matched_tuples_list[np.argmax(match_scores)], np.argmax(match_scores)
+
+    def update(self, pulled_arm, reward, day):
+        self.t += 1
+        self.update_observations(pulled_arm, reward, day)
+
+    def update2(self, pulled_arm, reward, day):
+        self.t += 1
+        self.update_observations(pulled_arm, reward, day)
+        self.beta_parameters[pulled_arm, 0] = self.beta_parameters[pulled_arm, 0] + reward
+        self.beta_parameters[pulled_arm, 1] = self.beta_parameters[pulled_arm, 1] + 1 - reward
+
+    def end_of_day(self, day):
+        if self.frame_size <= day:
+            day_to_delete = day - self.frame_size
+            for i in range(self.n_arms):
+                rew_del = np.sum(self.collected_rewards[i][day_to_delete])
+                n_del = len(self.collected_rewards[i][day_to_delete])
+                self.beta_parameters[i,0] -= rew_del
+                self.beta_parameters[i,1] -= (n_del - rew_del)
