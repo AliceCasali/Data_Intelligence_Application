@@ -56,8 +56,8 @@ class UCB_SW(LearnerSW):
             for i in range(self.n_arms): 
                 ##  you have self.collected_reward[arm][day] --> a list of rewards
                 n_prev = self.n_samples[i]
-                n_del = len(self.collected_rewards[i][day])
-                rew_del = np.sum(self.collected_rewards[i][day])
+                n_del = len(self.collected_rewards[i][day_to_delete])
+                rew_del = np.sum(self.collected_rewards[i][day_to_delete])
                 self.empirical_means[i] = (self.empirical_means[i]*n_prev - rew_del) / (n_prev-n_del)
                 self.n_samples[i] = n_prev - n_del
                 self.t -= n_del
