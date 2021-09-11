@@ -6,11 +6,6 @@ class TS_Learner(Learner):
   def __init__(self, n_arms, n_classes = 4):
     super().__init__(n_arms=n_arms,n_classes=n_classes)
     self.beta_parameters = np.ones((n_arms, 2))
-  
-  """def pull_arm(self):
-    to_pull = self.arms*np.random.beta(self.beta_parameters_price[:, 0], self.beta_parameters_price[:, 1])
-    idx = np.unravel_index(to_pull.argmax(), to_pull.shape)
-    return idx"""
 
   def update(self, pulled_arm, reward):
     self.t += 1
