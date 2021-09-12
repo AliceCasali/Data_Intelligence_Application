@@ -11,8 +11,9 @@ def clamp(num, min_val, max_val):
 
 def generate_conversion_rate(prices):
 	val = np.random.rand(len(prices))
-	conversion_rates = val[::-1]#np.sort(val)[::-1]
-	return conversion_rates
+	#conversion_rates = np.sort(val)[::-1]
+	return val
+
 
 def index(array, value):
 	return np.where(array == value)[0][0]
