@@ -2,6 +2,8 @@ import numpy as np
 import itertools
 from mab.ts_learner import *
 from mab.ucb_learner import *
+from mab.ts_learner_sw import *
+from mab.ucb_learner_sw import *
 from utilities import * 
 
 
@@ -98,6 +100,24 @@ class Shop():
             self.assignment_learner = TS_Learner(n_arms=n_arms)
         elif learner == 'UCB':
             self.assignment_learner = UCB(n_arms=n_arms)
+
+    def set_price_learner_sw (self, learner, n_arms, frame_size=60, days=365):
+        if learner == 'TS':
+            self.price_learner_sw = TS_Learner_SW(n_arms=n_arms, frame_size=frame_size, days=days)
+        elif learner == 'UCB':
+            self.price_learner_sw = UCB_SW(n_arms=n_arms, frame_size=frame_size, days=days)
+    
+    def set_price2_learner_sw (self, learner, n_arms, frame_size=60, days=365):
+        if learner == 'TS':
+            self.price2_learner_sw = TS_Learner_SW(n_arms=n_arms, frame_size=frame_size, days=days)
+        elif learner == 'UCB':
+            self.price2_learner_sw = UCB_SW(n_arms=n_arms, frame_size=frame_size, days=days)
+
+    def set_assignment_learner_sw(self, learner, n_arms, frame_size=60, days=365):
+        if learner == 'TS':
+            self.assignment_learner_sw = TS_Learner_SW(n_arms=n_arms, frame_size=frame_size, days=days)
+        elif learner == 'UCB':
+            self.assignment_learner_sw = UCB_SW(n_arms=n_arms, frame_size=frame_size, days=days)
     
     
     def best_promo_per_class(self, chosen_price1 = None, chosen_price2 = None):

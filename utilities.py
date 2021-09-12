@@ -14,5 +14,6 @@ def generate_conversion_rate(prices):
 	#conversion_rates = np.sort(val)[::-1]
 	return val
 
+
 def index(array, value):
 	return np.where(array == value)[0][0]
