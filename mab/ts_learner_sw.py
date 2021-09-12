@@ -8,7 +8,7 @@ class TS_Learner_SW(LearnerSW):
 
     def get_beta_parameters(self, day):
         bp = np.ones((self.n_arms, 2))
-        start = np.max(0, day-self.frame_size)
+        start = max(0, day-self.frame_size)
 
         for i in range(self.n_arms):
             n_rew = 0
@@ -22,13 +22,13 @@ class TS_Learner_SW(LearnerSW):
         return bp
 
     def pull_arm(self, day):
-        bp = self.get_beta_parameters(day)
-        idx = np.argmax(np.random.beta(bp[:,0], bp[:,1]))
-        #idx = np.argmax(np.random.beta(self.beta_parameters[:,0], bp[:,1]))
+        #bp = self.get_beta_parameters(day)
+        #idx = np.argmax(np.random.beta(bp[:,0], bp[:,1]))
+        idx = np.argmax(np.random.beta(self.beta_parameters[:,0], self.beta_parameters[:,1]))
         return idx
 
     def pull_arm_matching(self, ec, ep, arms, day, p1idx=None, p2idx=None):
-        bp = self.get_beta_parameters(day)
+        #bp = self.get_beta_parameters(day)
         graph = np.zeros((len(ec), len(ep)))
         for i in range(len(ec)):
             for j in range(len(ep)):
@@ -41,8 +41,8 @@ class TS_Learner_SW(LearnerSW):
                 arm_index = arms.index((p2idx, ec[i], ep[j]))
               else:
                 arm_index = arms.index((ec[i], ep[j]))
-              graph[i,j] = np.random.beta(bp[arm_index,0], bp[arm_index, 1])
-              #graph[i,j] = np.random.beta(self.beta_parameters[arm_index,0], self.beta_parameters[arm_index, 1])
+              #graph[i,j] = np.random.beta(bp[arm_index,0], bp[arm_index, 1])
+              graph[i,j] = np.random.beta(self.beta_parameters[arm_index,0], self.beta_parameters[arm_index, 1])
 
         matched_c, matched_p = linear_sum_assignment(-graph)
         matched_tuples = [(ec[c], ep[p]) for c,p in zip(matched_c, matched_p)]
@@ -50,7 +50,7 @@ class TS_Learner_SW(LearnerSW):
         return matched_tuples
     
     def pull_arm_all(self, ec, ep, arms, n_price1, n_price2, day):
-        bp = self.get_beta_parameters(day)
+        #bp = self.get_beta_parameters(day)
         matched_tuples_list = []
         match_scores = []
     
@@ -60,8 +60,8 @@ class TS_Learner_SW(LearnerSW):
                 for i in range(len(ec)):
                     for j in range(len(ep)):
                         arm_index = arms.index((k, l , ec[i], ep[j]))
-                        graph[i,j] = np.random.beta(bp[arm_index,0], bp[arm_index, 1])
-                        #graph[i,j] = np.random.beta(self.beta_parameters[arm_index,0], self.beta_parameters[arm_index, 1])
+                        #graph[i,j] = np.random.beta(bp[arm_index,0], bp[arm_index, 1])
+                        graph[i,j] = np.random.beta(self.beta_parameters[arm_index,0], self.beta_parameters[arm_index, 1])
                 matched_c, matched_p = linear_sum_assignment(-graph)
                 matched_tuples = [(ec[c], ep[p]) for c,p in zip(matched_c, matched_p)]
 
@@ -72,11 +72,11 @@ class TS_Learner_SW(LearnerSW):
 
         return matched_tuples_list[np.argmax(match_scores)], np.argmax(match_scores)
 
-    def update(self, pulled_arm, reward, day):
+    """def update(self, pulled_arm, reward, day):
         self.t += 1
-        self.update_observations(pulled_arm, reward, day)
+        self.update_observations(pulled_arm, reward, day)"""
 
-    def update2(self, pulled_arm, reward, day):
+    def update(self, pulled_arm, reward, day):
         self.t += 1
         self.update_observations(pulled_arm, reward, day)
         self.beta_parameters[pulled_arm, 0] = self.beta_parameters[pulled_arm, 0] + reward
@@ -90,3 +90,10 @@ class TS_Learner_SW(LearnerSW):
                 n_del = len(self.collected_rewards[i][day_to_delete])
                 self.beta_parameters[i,0] -= rew_del
                 self.beta_parameters[i,1] -= (n_del - rew_del)
+                self.beta_parameters[i,0] = max(1, self.beta_parameters[i,0])
+                self.beta_parameters[i,1] = max(1, self.beta_parameters[i,1])
+
+            return day_to_delete, rew_del, n_del, self.beta_parameters[i,0], self.beta_parameters[i,1]
+
+        else:
+            return None, None, None, None, None

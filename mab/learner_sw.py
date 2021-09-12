@@ -8,7 +8,7 @@ class LearnerSW():
         self.t = 0
         self.days = days
         self.frame_size = frame_size
-        self.collected_rewards = [[[] for i in range(n_arms)] for j in range(days)]
+        self.collected_rewards = [[[] for i in range(days)] for j in range(n_arms)]
         self.rewards_per_arm = [[] for i in range(n_arms)]
 
     def update_observations(self, pulled_arm, reward, day):
