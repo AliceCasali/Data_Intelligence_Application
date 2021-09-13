@@ -23,6 +23,11 @@ class Environment():
         ## TODO should be promo, class, price
         return np.random.binomial(1, self.true_conv2[promo, cust_class, index(self.prices2, price)])
 
+    def get_new_conversion_rates(self):
+        self.true_conv1 = np.array([generate_conversion_rate(self.prices1) for x in range(self.n_classes)]) # [class x price]
+        self.true_conv2 = np.array([[generate_conversion_rate(self.prices2) for x in range(self.n_classes)] for y in range(len(self.discounts))]) # [promo x class x price]   
+
+
     #Adjust "means" and "variances" in order to test different distributions of customers 
     def generate_next_day_customers(self, means = ([25, 25, 25, 25]), variances =  ([10,10,10,10])):
         means = np.array(means)
