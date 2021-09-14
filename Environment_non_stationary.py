@@ -35,3 +35,6 @@ class Environment():
     def arrival_of_a_single_customer(self):
        class_of_customer = np.random.randint(4, size=(1))
        return class_of_customer
+
+    def get_phase(self, horizon=365):
+        return int(self.t / (horizon/self.n_phases))
