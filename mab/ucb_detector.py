@@ -1,9 +1,10 @@
+from mab.ucb_matching import UCB_Matching
 from mab.ucb_learner import *
 from mab.cusum import *
 
-class UCB_Detector(UCB):
-    def __init__(self, n_arms, M=365, eps=0.05, h=40, alpha=0.01):
-        super().__init__(n_arms)
+class UCB_Detector(UCB_Matching):
+    def __init__(self, n_arms, n_rows, n_cols, M=365, eps=0.05, h=40, alpha=0.01):
+        super().__init__(n_arms, n_rows, n_cols)
         self.change_detection = [CUSUM(M, eps, h) for _ in range(n_arms)]
         self.valid_rewards_per_arm = [[] for _ in range(n_arms)]
         self.detections = [[] for _ in range(n_arms)]
@@ -26,5 +27,11 @@ class UCB_Detector(UCB):
     
     def update_observations(self, pulled_arm, reward):
         self.rewards_per_arm[pulled_arm].append(reward)
-        self.valid_rewards_per_arms[pulled_arm].append(reward)
+        self.valid_rewards_per_arm[pulled_arm].append(reward)
         self.collected_rewards = np.append(self.collected_rewards, reward)
+
+    def set_rows(self, n_rows):
+        self.n_rows = n_rows
+
+    def set_cols(self, n_cols):
+        self.n_cols = n_cols
