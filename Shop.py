@@ -4,6 +4,7 @@ from mab.ts_learner import *
 from mab.ucb_learner import *
 from mab.ts_learner_sw import *
 from mab.ucb_learner_sw import *
+from mab.ucb_detector import *
 from utilities import * 
 from scipy.signal import savgol_filter
 
@@ -105,7 +106,7 @@ class Shop():
         if learner == 'TS':
             self.assignment_learner = TS_Learner(n_arms=n_arms)
         elif learner == 'UCB':
-            self.assignment_learner = UCB(n_arms=n_arms)
+            self.assignment_learner = UCB_Detector(n_arms=n_arms)
 
     def set_price_learner_sw (self, learner, n_arms, frame_size=60, days=365):
         if learner == 'TS':
