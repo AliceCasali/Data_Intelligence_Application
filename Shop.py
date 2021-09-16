@@ -17,7 +17,7 @@ class Shop():
         self.conv1 = np.array([generate_conversion_rate(self.prices1) for x in range(self.n_classes)]) # [class x price]
         self.conv2 = np.array([[generate_conversion_rate(self.prices2) for x in range(self.n_classes)] for y in range(len(self.discounts))]) # [promo x class x price]  
 
-        self.window_size = 7
+        self.window_size = 10
         self.threshold = 40
         self.detection_data = []
         self.detection_window = []    
@@ -211,10 +211,12 @@ class Shop():
             window_mean = np.mean(self.detection_window)
 
             if abs(window_mean - data_mean) > self.threshold:
-                print("CHANGE DETECTED! " + str(index(self.detection_data, data)))
+                print("CHANGE DETECTED! " + str(self.assignment_learner.t))
                 self.detection_window = []
                 self.detection_data = []
-
+                self.price_learner.reset()
+                #self.price2_learner.reset()
+ 
         
 
 

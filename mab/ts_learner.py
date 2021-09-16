@@ -60,5 +60,8 @@ class TS_Learner(Learner):
 
     return matched_tuples_list[np.argmax(match_scores)], np.argmax(match_scores)
 
+  def reset(self):
+    self.beta_parameters = np.ones((self.n_arms, 2))
+
 
 
