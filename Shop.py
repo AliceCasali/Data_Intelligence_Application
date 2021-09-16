@@ -75,6 +75,18 @@ class Shop():
         return expected_promos
 
     def get_promo_fractions_from_tuples(self, matched_tuples):
+        ######## funzione vecchia senza cambio di matched tuples
+        promo_fractions = np.zeros((self.n_classes, len(self.discounts)))
+
+        for t in matched_tuples:
+            promo_fractions[t[-2], t[-1]] += 1
+
+        promo_fractions /= self.customers.reshape(4,1)
+        return promo_fractions
+
+    def get_promo_fractions_from_matched_tuples(self, matched_tuples):
+        #############????
+        self.matched_tuples = [(self.rows[c], self.cols[p]) for c,p in matched_tuples]
         promo_fractions = np.zeros((self.n_classes, len(self.discounts)))
 
         for t in matched_tuples:

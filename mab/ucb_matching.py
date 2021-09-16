@@ -10,11 +10,14 @@ class UCB_Matching(UCB):
         self.n_cols = n_cols
         # assert n_arms == n_rows*n_cols
 
-    def pull_arm(self, n_rows, n_cols):
+    def pull_arm(self, rows, cols):
+        n_rows = len(rows)
+        n_cols = len(cols)
         upper_conf = self.empirical_means + self.confidence
         upper_conf[np.isinf(upper_conf)] = 1e3
-        row_ind, col_ind = linear_sum_assignment(-upper_conf.reshape(self.n_rows, self.n_cols))
-        matched_tuples = [(n_rows[c], n_cols[p]) for c,p in zip(row_ind, col_ind)]
+        row_ind, col_ind = linear_sum_assignment(-upper_conf.reshape(n_rows, n_cols))
+        #########????
+        self.matched_tuples = [(rows[c], cols[p]) for c,p in zip(row_ind, col_ind)]
         return (row_ind, col_ind)
 
     def update(self, pulled_arms, rewards):
