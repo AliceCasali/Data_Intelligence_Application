@@ -25,6 +25,10 @@ class Environment():
         current_phase = int(self.t / (horizon/self.n_phases))
         return np.random.binomial(1, self.true_conv2[current_phase, promo, cust_class, index(self.prices2, price)])
 
+    def set_conv_rates(self, cr1, cr2):
+        self.true_conv1 = cr1
+        self.true_conv2 = cr2
+
     #Adjust "means" and "variances" in order to test different distributions of customers 
     def generate_next_day_customers(self, means = ([25, 25, 25, 25]), variances =  ([10,10,10,10])):
         self.t += 1
