@@ -18,6 +18,17 @@ class TS_Learner(Learner):
     idx = np.argmax(np.random.beta(self.beta_parameters[:,0], self.beta_parameters[:,1]))
     return idx
 
+  def pull_arm_price2(self, price1idx, arms):
+    max_num = -1000
+    max_ind = -1
+    for i in range(self.n_arms):
+      if arms[i][0] == price1idx:
+        r = np.random.beta(self.beta_parameters[i,0], self.beta_parameters[i,1])
+        if r > max_num:
+          r = max_num
+          max_ind = i
+    return arms[max_ind][1]
+
   def pull_arm_matching(self, ec, ep, arms, p1idx=None, p2idx=None):
         graph = np.zeros((len(ec), len(ep)))
         for i in range(len(ec)):
