@@ -5,6 +5,7 @@ from mab.ucb_learner import *
 from mab.ts_learner_sw import *
 from mab.ucb_learner_sw import *
 from utilities import * 
+from scipy.signal import savgol_filter
 
 
 class Shop():
@@ -14,7 +15,12 @@ class Shop():
         self.prices2 = np.linspace(100,300, num=5)
         self.discounts = np.array([0.0, 0.05, 0.10, 0.25])
         self.conv1 = np.array([generate_conversion_rate(self.prices1) for x in range(self.n_classes)]) # [class x price]
-        self.conv2 = np.array([[generate_conversion_rate(self.prices2) for x in range(self.n_classes)] for y in range(len(self.discounts))]) # [promo x class x price]      
+        self.conv2 = np.array([[generate_conversion_rate(self.prices2) for x in range(self.n_classes)] for y in range(len(self.discounts))]) # [promo x class x price]  
+
+        self.window_size = 10
+        self.threshold = 40
+        self.detection_data = []
+        self.detection_window = []    
 
 
     """def get_clairvoyants_by_phase(self, ec, ep, n_price1, n_price2, n_phases, price_arms):
@@ -222,5 +228,30 @@ class Shop():
 
             promos = clairvoyant_promos*2
             return promos
+    
+    def detect_phase_change(self, data):
+        self.detection_data.append(data)
+
+        if len(self.detection_data) < self.window_size:
+            self.detection_window.append(data)
+        else:
+            self.detection_window.pop(0)
+            self.detection_window.append(data)
+
+            if len(self.detection_data) > self.threshold:
+                data_mean = np.mean(savgol_filter(self.detection_data, 41, 3))
+            else:
+                data_mean = np.mean(self.detection_data)
+            
+            window_mean = np.mean(self.detection_window)
+
+            if abs(window_mean - data_mean) > self.threshold:
+                print("CHANGE DETECTED! " + str(self.assignment_learner.t))
+                self.detection_window = []
+                self.detection_data = []
+                self.price_learner.reset()
+                #self.price2_learner.reset()
+ 
+        
 
 
