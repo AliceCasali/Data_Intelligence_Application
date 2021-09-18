@@ -246,7 +246,7 @@ class Shop():
             window_mean = np.mean(self.detection_window)
 
             if abs(window_mean - data_mean) > self.threshold:
-                print("CHANGE DETECTED! " + str(self.assignment_learner.t))
+                print("CHANGE DETECTED!")
                 self.detection_window = []
                 self.detection_data = []
                 self.price_learner.reset()
