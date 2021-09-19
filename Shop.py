@@ -18,9 +18,12 @@ class Shop():
         self.conv2 = np.array([[generate_conversion_rate(self.prices2) for x in range(self.n_classes)] for y in range(len(self.discounts))]) # [promo x class x price]  
 
         self.window_size = 10
-        self.threshold = 40
+        self.threshold = 11
         self.detection_data = []
-        self.detection_window = []    
+        self.detection_window = [] 
+        self.days = 0
+
+        self.price2_learner = None   
 
     def get_clairvoyant_prices_and_matching(self, ec, ep, n_price1, n_price2):
         matched_tuples_list = []
@@ -195,27 +198,30 @@ class Shop():
             return promos
     
     def detect_phase_change(self, data):
+        self.days += 1
         self.detection_data.append(data)
-
         if len(self.detection_data) < self.window_size:
             self.detection_window.append(data)
         else:
             self.detection_window.pop(0)
             self.detection_window.append(data)
 
-            if len(self.detection_data) > self.threshold:
-                data_mean = np.mean(savgol_filter(self.detection_data, 41, 3))
-            else:
-                data_mean = np.mean(self.detection_data)
+            first_time = self.days - len(self.detection_data)
+            data_slope = slope(self.detection_data[0], first_time, self.detection_data[-1], self.days)
             
-            window_mean = np.mean(self.detection_window)
+            window_slope = slope(self.detection_window[0], first_time, self.detection_window[-1], self.days)
 
-            if abs(window_mean - data_mean) > self.threshold:
-                print("CHANGE DETECTED!")
+            #print("T: " + str(self.days) + " data_slope: " + str(data_slope) + " window_slope: " + str(window_slope) + " ratio: " + str(window_slope/data_slope))
+            if window_slope/data_slope > self.threshold:
+                print("CHANGE DETECTED! day:" + str(self.days))
                 self.detection_window = []
                 self.detection_data = []
                 self.price_learner.reset()
-                #self.price2_learner.reset()
+                self.assignment_learner.reset()
+                if self.price2_learner != None:
+                    self.price2_learner.reset()
+                return self.days
+        return None
  
         
 

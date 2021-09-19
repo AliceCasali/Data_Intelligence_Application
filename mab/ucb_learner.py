@@ -11,7 +11,7 @@ class UCB(Learner):
 
     def pull_arm(self):
         upper_conf = self.empirical_means + self.confidence
-        return np.random.choice(np.where(upper_conf == upper_conf.max())[0])#, self.empirical_means, self.confidence, upper_conf
+        return np.random.choice(np.where(upper_conf == upper_conf.max())[0])
 
     def update(self, pull_arm,reward):
         self.t += 1
@@ -65,4 +65,9 @@ class UCB(Learner):
                 match_scores.append(score)
 
         return matched_tuples_list[np.argmax(match_scores)], np.argmax(match_scores)
+    
+    def reset(self):
+        self.rewards_per_arm = [[] for i in range(self.n_arms)]
+        self.confidence = np.array([np.inf]*self.n_arms)
+        self.empirical_means = np.zeros(self.n_arms)
 

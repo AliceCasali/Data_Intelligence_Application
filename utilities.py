@@ -14,6 +14,9 @@ def generate_conversion_rate(prices):
 	conversion_rates = np.sort(val)[::-1]
 	return val
 
-
 def index(array, value):
 	return np.where(array == value)[0][0]
+
+def slope(x1, y1, x2, y2):
+    m = (y2-y1)/(x2-x1)
+    return m
