@@ -22,41 +22,6 @@ class Shop():
         self.detection_data = []
         self.detection_window = []    
 
-
-    """def get_clairvoyants_by_phase(self, ec, ep, n_price1, n_price2, n_phases, price_arms):
-        price_tuples = []
-        promo_fractions = []
-
-        for phase in range(n_phases):
-            matched_tuples_list = []
-            match_scores = []
-
-            for k in range(n_price1):
-                for l in range(n_price2):
-                    graph = np.zeros((len(ec), len(ep)))
-                    p1 = self.prices1[k]
-                    p2 = self.prices2[l]
-                    for i in range(n_price1):
-                        for j in range(n_price2):
-                            graph[i,j] = p1*self.conv1[phase, ec[i], k] + self.conv1[phase, ec[i], k]*p2*(1-self.discounts[ep[j]])*self.conv2[phase, ep[j], ec[i], l]
-                    matched_c, matched_p = linear_sum_assignment(-graph)
-                    
-                    matched_tuples = [(ec[c], ep[p]) for c,p in zip(matched_c, matched_p)]
-
-                    matched_tuples_list.append(matched_tuples)
-                    score = graph[matched_c, matched_p].sum()
-                    match_scores.append(score)
-
-            winner_match_tuples = matched_tuples_list[np.argmax(match_scores)]
-            pf = self.get_promo_fractions_from_tuples(winner_match_tuples)
-
-            winner_price_arm = np.argmax(match_scores)
-
-            price_tuples.append(price_arms[winner_price_arm])
-            promo_fractions.append(pf)
-        
-        return price_tuples, promo_fractions"""
-
     def get_clairvoyant_prices_and_matching(self, ec, ep, n_price1, n_price2):
         matched_tuples_list = []
         match_scores = []
