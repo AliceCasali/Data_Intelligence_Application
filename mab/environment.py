@@ -1,89 +1,39 @@
+from random import random
+from utilities import *
 import numpy as np
-import statistics
-from scipy.stats import truncnorm
-import random
-
-def clamp(num, min_val, max_val):
-	return max(min(num, max_val), min_val)
+import itertools
 
 class Environment():
-    #def __init__(self, gaussian_parameters, discounts, prices, conv_rate1, conv_rate2, fractions, fraction_idxs):
-        #self.probabilities = probabilities
-    def __init__(self, gaussian_parameters, discounts, prices, conv_rate1, conv_rate2):
-        means, variances = zip(*gaussian_parameters)
+    def __init__(self, prices1, prices2, discounts):
+        #Shop related data
+        self.prices1, self.prices2, self.discounts = prices1, prices2, discounts
+
+        #Customers that will visit the shop during the day
+        self.generate_next_day_customers()
+        self.n_classes = len(self.customers)
+        
+        #Conversion rates
+        self.true_conv1 = np.array([generate_conversion_rate(prices1) for x in range(self.n_classes)]) # [class x price]
+        self.true_conv2 = np.array([[generate_conversion_rate(prices2) for x in range(self.n_classes)] for y in range(len(discounts))]) # [promo x class x price]      
+    
+    def round1(self, cust_class, price):
+        return np.random.binomial(1, self.true_conv1[cust_class, index(self.prices1, price)])
+    
+    def round2(self, cust_class, promo, price):
+        ## TODO should be promo, class, price
+        return np.random.binomial(1, self.true_conv2[promo, cust_class, index(self.prices2, price)])
+
+    def get_new_conversion_rates(self):
+        self.true_conv1 = np.array([generate_conversion_rate(self.prices1) for x in range(self.n_classes)]) # [class x price]
+        self.true_conv2 = np.array([[generate_conversion_rate(self.prices2) for x in range(self.n_classes)] for y in range(len(self.discounts))]) # [promo x class x price]   
+
+
+    #Adjust "means" and "variances" in order to test different distributions of customers 
+    def generate_next_day_customers(self, means = ([25, 25, 25, 25]), variances =  ([10,10,10,10])):
         means = np.array(means)
         variances = np.array(variances)
-
         self.customers = np.array([clamp(int(np.random.normal(m, v)), int(m/2), int(3*m/2)) for m,v in zip(means, variances)])
-        self.discounts = discounts
-        self.prices = prices
-        self.conv1 = conv_rate1
-        self.conv2 = conv_rate2
-        self.nclasses = len(means)
-        #self.fractions = fractions
-        #self.fraction_idxs = fraction_idxs
-
-    def round1_per_class(self, pulled_arms):
-       return list(map(np.random.binomial, np.ones(len(pulled_arms)), self.conv1[pulled_arms]))
-    
-    def round_2(self, pulled_arm):
-       return np.random.binomial(1, self.conv2[pulled_arm])
-    '''# simulates a customer
-        def round_offline(self):
-    	    reward = 0
-    	    promo = -1
-    	c = random.randint(0, 3)
-    	while self.customers[c] == 0:
-    		c = random.randint(0, 3)
-    	self.customers[c] -= 1
-    	rand = random.random() # random variable to decide whether the customer buys or not
-    	if rand < self.conv1[c]: # case when the customer buys the first item
-    		reward = self.prices[0]
-    		promo_p = np.cumsum(self.fractions[c])
-    		rand = random.random()
-    		for j in range(len(promo_p)):
-    			if rand < promo_p[j]:
-    				promo = j
-    				break
-    		rand = random.random()
-    		if rand < self.conv2[promo][c]:
-    			reward += self.prices[1]*(1-self.discounts[promo])
-    	return c, promo, reward
-
-    def round_day(self):
-    	rewards = [0, 0, 0, 0]
-    	customer_numbers = np.array([num for num in self.customers])
-    	for i in range(np.array(self.customers).sum()):
-    		c, promo, reward = self.round_offline()
-    		rewards[c] += reward
-    	print(np.array(rewards) / customer_numbers)
-    	return np.array(rewards) / customer_numbers'''
-
-    def calculation_probabilities_for_update(self,fractions,graph, class_id, MODE):
-        p = [ 0 for x in range(0,4)]
-        index_max = np.argmax(graph[class_id][0])
-        p[index_max] = graph[class_id][0][index_max] #Not so sure about this syntax...
-        indices = [x for x in range(0,4) if x!= index_max]
-        for i in indices:
-            p[i] = graph[class_id][0][i]
-        return p    
-    
-    def update_probabilities(self,optimal_solution):
-        #given a optimal solution, it returns an array for each discount
-        #for example: in optimal solution c0 is assigned to p0, it will be:
-        #p0=[0.75 0.15 0.05 0.05]
-
-        #I imagined optimal solution as an array
-        #optimal solution = [1 0 2 3]
-        #this means: customer 1 takes p0 and so on
-        best_assignment_0 = optimal_solution[0]
-        best_assignment_1 = optimal_solution[1]
-        best_assignment_2 = optimal_solution[2]
-        best_assignment_3 = optimal_solution[3]
-
-        p0 = self.calculation_probabilities_for_update(best_assignment_0)
-        p1 = self.calculation_probabilities_for_update(best_assignment_1)
-        p2 = self.calculation_probabilities_for_update(best_assignment_2)
-        p3 = self.calculation_probabilities_for_update(best_assignment_3)
-
-        return p0,p1,p2,p3
+   
+    def arrival_of_a_single_customer(self):
+       class_of_customer = np.random.randint(4, size=(1))
+       return class_of_customer
