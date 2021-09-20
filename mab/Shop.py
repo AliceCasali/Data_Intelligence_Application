@@ -4,7 +4,7 @@ from mab.ts_learner import *
 from mab.ucb_learner import *
 from mab.ts_learner_sw import *
 from mab.ucb_learner_sw import *
-from utilities import * 
+from mab.utilities import * 
 from scipy.signal import savgol_filter
 
 

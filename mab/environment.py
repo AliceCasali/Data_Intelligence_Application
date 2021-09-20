@@ -1,5 +1,5 @@
 from random import random
-from utilities import *
+from mab.utilities import *
 import numpy as np
 import itertools
 
